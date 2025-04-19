@@ -3,6 +3,6 @@
     public class ConnectionStringOption
     {
         public const string Key = "ConnectionStrings";
-        public string ConnectionStrings { get; set; } = default!;
+        public string DefaultConnection { get; set; } = default!;
     }
 }

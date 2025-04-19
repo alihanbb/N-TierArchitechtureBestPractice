@@ -1,6 +1,7 @@
 ﻿using AppRepository.Categories;
 using AppRepository.Connect;
 using AppRepository.Context;
+using AppRepository.Interceptors;
 using AppRepository.Products;
 using AppRepository.Repository;
 using AppRepository.UnitOfWorks;
@@ -17,11 +18,12 @@ namespace AppRepository.Extentions
             services.AddDbContext<AppDbContextcs>(options =>
             {
                 var connnectionStrings = configuration.GetSection(ConnectionStringOption.Key).Get<ConnectionStringOption>();
-                options.UseNpgsql(connnectionStrings!.ConnectionStrings, defaultConnectionOptionAction =>
+                options.UseNpgsql(connnectionStrings!.DefaultConnection, defaultConnectionOptionAction =>
                 {
                     defaultConnectionOptionAction.MigrationsAssembly(typeof(RepositoryAssembly).Assembly.FullName);
                 });
-           
+                options.AddInterceptors(new AuditDbContextInterceptor());
+
             });
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));

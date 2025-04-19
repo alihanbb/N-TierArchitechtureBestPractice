@@ -2,7 +2,7 @@
 
 namespace AppRepository.Products
 {
-    public class Product
+    public class Product : IAuditEntitiy
     {
         public int ProductId { get; set; }
         public string ProductName { get; set; } = default!;
@@ -11,5 +11,7 @@ namespace AppRepository.Products
 
         public int CategoryId { get; set; }
         public Category Category { get; set; } = default!;
+        public DateTime Created { get; set; }
+        public DateTime? Updated { get; set; }
     }
 }
