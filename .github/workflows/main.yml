@@ -1,0 +1,48 @@
+name: Build and Deploy to AKS
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Kodları çek
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # 2. .NET SDK’yı kur
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x' # Projenizin .NET sürümüne göre değiştirin
+
+    # 3. Tüm katman projelerinin bağımlılıklarını geri yükle
+    - name: Restore dependencies
+      run: |
+        dotnet restore ./KatmanliMimari.sln # Çözüm dosyasının adını güncelleyin
+        dotnet restore ./AppApi/AppApi.csproj
+        dotnet restore ./AppHost/AppHost.csproj
+        dotnet restore ./AppRepository/AppRepository.csproj
+        dotnet restore ./AppService/AppService.csproj
+
+    # 4. Tüm katman projelerini derle
+    - name: Build
+      run: |
+        dotnet build ./KatmanliMimari.sln --configuration Release --no-restore
+
+    # 5. Testleri çalıştır (varsa test projeleri ekleyin)
+    - name: Test
+      run: dotnet test ./KatmanliMimari.sln --no-build --verbosity normal
+
+    # 6. API projesini publish et (AppApi varsayılıyor)
+    - name: Publish
+      run: dotnet publish ./AppApi/AppApi.csproj -c Release -o ./publish /p:UseAppHost=false
+
+
