@@ -1,0 +1,41 @@
+name: Build and Deploy to AKS
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x' # Projenizin .NET sürümüne göre değiştirin
+
+    - name: Restore dependencies
+      run: |
+        dotnet restore ./KatmanliMimari.sln # Çözüm dosyasının adını güncelleyin
+        dotnet restore ./AppApi/AppApi.csproj
+        dotnet restore ./AppHost/AppHost.csproj
+        dotnet restore ./AppRepository/AppRepository.csproj
+        dotnet restore ./AppService/AppService.csproj
+
+
+    - name: Build
+      run: |
+        dotnet build ./KatmanliMimari.sln --configuration Release --no-restore
+
+    - name: Publish
+      run: dotnet publish ./AppHost/AppHost.csproj -c Release -o ./publish /p:UseAppHost=false
+
+
