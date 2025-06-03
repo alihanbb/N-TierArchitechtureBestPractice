@@ -41,7 +41,7 @@ public class ProductService(IProductRepository productRepository,IUnitOfWork uni
         var products = await productRepository.GetAll().ToListAsync();
         #region ManuelMapping
         // var productDtos = products.Select(p => new ProductDto(p.ProductId, p.ProductName, p.Price, p.Stock)).ToList();
-        #endregion
+        #endregion9
         var productDtos = mapper.Map<List<ProductDto>>(products);
         return ServiceResult<List<ProductDto>>.Succes(productDtos);
     }
