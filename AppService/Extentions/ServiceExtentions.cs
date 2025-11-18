@@ -23,7 +23,7 @@ namespace AppService.Extentions
            services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
            services.AddExceptionHandler<CriticalExsepsionHandler>();
-           services.AddExceptionHandler<GlobalExceptionHandler>();
+            services.AddExceptionHandler<GlobalExceptionHandler>();
 
 
 

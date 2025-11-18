@@ -34,14 +34,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "k8s", "k8s", "{EC24518C-FFE
 		k8s\postgres-deployment.yaml = k8s\postgres-deployment.yaml
 		k8s\postgres-pvc.yaml = k8s\postgres-pvc.yaml
 		k8s\rbac.yaml = k8s\rbac.yaml
-		k8s\README.md = k8s\README.md
 		k8s\resource-quota.yaml = k8s\resource-quota.yaml
 		k8s\secrets.yaml = k8s\secrets.yaml
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflow", "workflow", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
-	ProjectSection(SolutionItems) = preProject
-		k8s\.github-workflow-example.yml = k8s\.github-workflow-example.yml
+		k8s\seq-deployment.yaml = k8s\seq-deployment.yaml
 	EndProjectSection
 EndProject
 Global

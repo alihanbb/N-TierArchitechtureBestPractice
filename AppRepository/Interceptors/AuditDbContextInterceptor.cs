@@ -27,20 +27,6 @@ namespace AppRepository.Interceptors
                 if (entityEntry.Entity is not IAuditEntitiy auditEntitiy) continue;
 
                 _behaviors[entityEntry.State](eventData.Context, auditEntitiy);
-
-
-                //switch(entityEntry.State)
-                //{
-                //    case EntityState.Added:
-                //        AddBehavior(eventData.Context, auditEntitiy);
-                //        break;
-                //    case EntityState.Modified:
-                //        ModifedBehavior(eventData.Context, auditEntitiy);
-                //        break;
-                //}
-
-
-
             }
             return base.SavedChangesAsync(eventData, result, cancellationToken);
         }

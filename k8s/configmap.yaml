@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: katmanlimimari
+  labels:
+    app: katmanlimimari-api
+data:
+  POSTGRES_HOST: "postgres-service"
+  POSTGRES_PORT: "5432"
+  POSTGRES_DB: "katmanlimimari_db"
+  SEQ_URL: "http://seq-service:80"
+  SEQ_ACCEPT_EULA: "Y"
+  ASPNETCORE_ENVIRONMENT: "Production"
+  ASPNETCORE_URLS: "http://+:8080"
