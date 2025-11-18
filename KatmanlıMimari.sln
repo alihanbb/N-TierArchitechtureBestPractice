@@ -9,9 +9,40 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppService", "AppService\Ap
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppApi", "AppApis\AppApi.csproj", "{0FCC3B31-0578-4FA4-9604-F0943BAC42E7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppServiceDefaults", "AppServiceDefaults\AppServiceDefaults.csproj", "{4D40B0F3-E8B1-4A9B-B519-ABFC3CEE45D1}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{CD2E724E-C124-48B4-8EFF-EC991816C5F2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppHost", "AppHost\AppHost.csproj", "{4ED35238-A73B-4016-93D0-04ADF444E571}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{9E5D7F8C-DC82-4523-8CA1-BD96216DFE19}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest", "UnitTest\UnitTest.csproj", "{468459DE-FC2F-4215-B49A-614344017252}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{1414736D-93B7-41B9-B08D-ACB0708661B9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationTest", "IntegrationTest\IntegrationTest.csproj", "{F2B2E9BB-2AC9-4AB5-9F8B-F932BE504A59}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{81DDED9D-158B-E303-5F62-77A2896D2A5A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "k8s", "k8s", "{EC24518C-FFE8-4CA0-B690-5AD1FB7B389E}"
+	ProjectSection(SolutionItems) = preProject
+		k8s\api-deployment.yaml = k8s\api-deployment.yaml
+		k8s\configmap.yaml = k8s\configmap.yaml
+		k8s\hpa.yaml = k8s\hpa.yaml
+		k8s\ingress.yaml = k8s\ingress.yaml
+		k8s\migration-job.yaml = k8s\migration-job.yaml
+		k8s\namespace.yaml = k8s\namespace.yaml
+		k8s\network-policy.yaml = k8s\network-policy.yaml
+		k8s\pdb.yaml = k8s\pdb.yaml
+		k8s\postgres-deployment.yaml = k8s\postgres-deployment.yaml
+		k8s\postgres-pvc.yaml = k8s\postgres-pvc.yaml
+		k8s\rbac.yaml = k8s\rbac.yaml
+		k8s\README.md = k8s\README.md
+		k8s\resource-quota.yaml = k8s\resource-quota.yaml
+		k8s\secrets.yaml = k8s\secrets.yaml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflow", "workflow", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		k8s\.github-workflow-example.yml = k8s\.github-workflow-example.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,16 +62,31 @@ Global
 		{0FCC3B31-0578-4FA4-9604-F0943BAC42E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0FCC3B31-0578-4FA4-9604-F0943BAC42E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0FCC3B31-0578-4FA4-9604-F0943BAC42E7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4D40B0F3-E8B1-4A9B-B519-ABFC3CEE45D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4D40B0F3-E8B1-4A9B-B519-ABFC3CEE45D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4D40B0F3-E8B1-4A9B-B519-ABFC3CEE45D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4D40B0F3-E8B1-4A9B-B519-ABFC3CEE45D1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4ED35238-A73B-4016-93D0-04ADF444E571}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4ED35238-A73B-4016-93D0-04ADF444E571}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4ED35238-A73B-4016-93D0-04ADF444E571}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4ED35238-A73B-4016-93D0-04ADF444E571}.Release|Any CPU.Build.0 = Release|Any CPU
+		{468459DE-FC2F-4215-B49A-614344017252}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{468459DE-FC2F-4215-B49A-614344017252}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{468459DE-FC2F-4215-B49A-614344017252}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{468459DE-FC2F-4215-B49A-614344017252}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2B2E9BB-2AC9-4AB5-9F8B-F932BE504A59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2B2E9BB-2AC9-4AB5-9F8B-F932BE504A59}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2B2E9BB-2AC9-4AB5-9F8B-F932BE504A59}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2B2E9BB-2AC9-4AB5-9F8B-F932BE504A59}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{02507FB3-B2CB-42B5-90D5-70DCD8BF61E2} = {CD2E724E-C124-48B4-8EFF-EC991816C5F2}
+		{D5E43DEF-2903-48B4-8DF3-0ACA1F78BC2A} = {CD2E724E-C124-48B4-8EFF-EC991816C5F2}
+		{0FCC3B31-0578-4FA4-9604-F0943BAC42E7} = {CD2E724E-C124-48B4-8EFF-EC991816C5F2}
+		{468459DE-FC2F-4215-B49A-614344017252} = {9E5D7F8C-DC82-4523-8CA1-BD96216DFE19}
+		{F2B2E9BB-2AC9-4AB5-9F8B-F932BE504A59} = {9E5D7F8C-DC82-4523-8CA1-BD96216DFE19}
+		{81DDED9D-158B-E303-5F62-77A2896D2A5A} = {1414736D-93B7-41B9-B08D-ACB0708661B9}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {72E8BA81-BCA5-4EFB-B42B-FAD0FD275103}
 	EndGlobalSection
 EndGlobal

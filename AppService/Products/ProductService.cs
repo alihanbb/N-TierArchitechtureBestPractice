@@ -41,7 +41,7 @@ public class ProductService(IProductRepository productRepository,IUnitOfWork uni
         var products = await productRepository.GetAll().ToListAsync();
         #region ManuelMapping
         // var productDtos = products.Select(p => new ProductDto(p.ProductId, p.ProductName, p.Price, p.Stock)).ToList();
-        #endregion9
+        #endregion
         var productDtos = mapper.Map<List<ProductDto>>(products);
         return ServiceResult<List<ProductDto>>.Succes(productDtos);
     }
@@ -126,11 +126,3 @@ public class ProductService(IProductRepository productRepository,IUnitOfWork uni
         return ServiceResult.Succes(HttpStatusCode.NoContent);
     }
 }
-
-/*
-   Not: service kısımları her zaman önmelidir tüm metodlaarı ve işlmleride bu katmanda yaparız.
-Busıness katmanı dışında kullanması lazım. 
-Contrellar kısmında ne olursa olsun metod yazma
-Controller kısmında sadece request al ve response dön.
- 
- */

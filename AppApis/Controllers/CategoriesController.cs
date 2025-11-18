@@ -2,7 +2,7 @@
 using AppService.Categories;
 using AppService.Categories.Create;
 using AppService.Categories.Update;
-using Microsoft.AspNetCore.Http;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AppApi.Controllers

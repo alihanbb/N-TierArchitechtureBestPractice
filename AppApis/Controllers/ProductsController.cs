@@ -1,11 +1,13 @@
-﻿using AppService.Products;
+﻿using System.Threading.Tasks;
+using AppService.Products;
 using AppService.Products.Create;
 using AppService.Products.Update;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AppApis.Controllers
 {
-
+    [Route("api/[controller]")]
+    [ApiController]
     public class ProductsController(IProductService productService) : CustomBaseController
     {
         [HttpGet]
