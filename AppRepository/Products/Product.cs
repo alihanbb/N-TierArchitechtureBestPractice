@@ -2,9 +2,9 @@
 
 namespace AppRepository.Products
 {
-    public class Product : IAuditEntitiy
+    public class Product :BaseEntity<int>, IAuditEntitiy
     {
-        public int ProductId { get; set; }
+
         public string ProductName { get; set; } = default!;
         public decimal Price { get; set; }
         public int Stock { get; set; }

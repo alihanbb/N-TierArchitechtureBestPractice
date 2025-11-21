@@ -1,10 +1,9 @@
 ﻿using AppRepository.Context;
 using AppRepository.Repository;
-using Microsoft.EntityFrameworkCore;
 
 namespace AppRepository.Products
 {
-    public class ProductRepository(AppDbContextcs contextcs) : GenericRepository<Product>(contextcs), IProductRepository
+    public class ProductRepository(AppDbContextcs contextcs) : GenericRepository<Product, int>(contextcs), IProductRepository
     {
         public Task<IEnumerable<object>> GetAllAsync()
         {

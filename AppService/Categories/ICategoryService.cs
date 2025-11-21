@@ -7,7 +7,7 @@ namespace AppService.Categories
     public interface ICategoryService
     {
         Task<ServiceResult<int>> CreateAsync(CreateCategoryRequest categoryRequest);
-        Task<ServiceResult> UpdateAsync(UpdateCategoryRequest categoryRequest);
+        Task<ServiceResult> UpdateAsync(int id,UpdateCategoryRequest categoryRequest);
         Task<ServiceResult> DeleteAsync(int categoryId);
         Task<ServiceResult<List<CategoryDto>>> GetAllListAsync();
         Task<ServiceResult<CategoryDto>> GetByIdAsync(int categoryId);

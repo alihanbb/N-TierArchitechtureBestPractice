@@ -1,44 +1,103 @@
+Ôªøusing AppApis.Extensions;
 using AppRepository.Extentions;
 using AppService.Extentions;
-using AppService.Products;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using Serilog.Events;
 
-var builder = WebApplication.CreateBuilder(args);
+// Bootstrap Logger - Initial logging before full configuration
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
 
-
-builder.Services.AddControllers(options =>options.Filters.Add<FluentValidationFiltre>());
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-// Test ortam˝nda AddRepository'yi Áa˝rma
-if (!builder.Environment.IsEnvironment("Testing"))
+try
 {
-    builder.Services.AddRepository(builder.Configuration);
+    Log.Information("üöÄ Application starting...");
+
+    var builder = WebApplication.CreateBuilder(args);
+
+    // ===== Logging Configuration =====
+    builder.Host.ConfigureSerilogLogging();
+
+    // ===== Service Registration =====
+    builder.Services.AddControllers(options =>
+    {
+        options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true;
+    });
+
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen();
+
+    builder.Services.Configure<ApiBehaviorOptions>(options =>
+    {
+        options.SuppressModelStateInvalidFilter = true;
+    });
+
+    // API Versioning
+    builder.Services.AddApiVersioningConfiguration();
+
+    // Rate Limiting
+    builder.Services.AddRateLimitingConfiguration();
+
+    // Hybrid Cache (L1 + L2)
+    builder.Services.AddHybridCache(builder.Configuration);
+
+    // Health Checks
+    builder.Services.AddHealthCheckConfiguration(builder.Configuration);
+
+    // Application Services & Repository
+    Log.Information("üì¶ Registering application services...");
+    builder.Services.AddServices(builder.Configuration);
+
+    if (!builder.Environment.IsEnvironment("Testing"))
+    {
+        Log.Information("üíæ Registering repository layer...");
+        builder.Services.AddRepository(builder.Configuration);
+    }
+
+    // ===== Middleware Pipeline =====
+    var app = builder.Build();
+
+    // Serilog Request Logging
+    app.ConfigureSerilogRequestLogging();
+
+    // Rate Limiting
+    app.UseRateLimiter();
+
+    // Development Tools
+    if (app.Environment.IsDevelopment())
+    {
+        Log.Information("üîß Development environment detected. Enabling Swagger...");
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
+
+    // Exception Handling
+    app.UseExceptionHandler(_ => { });
+
+    // Standard Middleware
+    app.UseHttpsRedirection();
+    app.UseAuthorization();
+
+    // Health Check Endpoints
+    app.MapHealthCheckEndpoints();
+
+    // API Controllers
+    app.MapControllers();
+
+    Log.Information("‚úÖ Application started successfully.");
+    app.Run();
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "‚ùå Application failed to start!");
+    throw;
+}
+finally
+{
+    Log.Information("üõë Application shutting down...");
+    Log.CloseAndFlush();
 }
 
-builder.Services.AddServices(builder.Configuration);
-
-builder.Services.Configure<ApiBehaviorOptions>(opt =>
-{
-    opt.SuppressModelStateInvalidFilter = true;
-    //opt.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true;
-});
-
-var app = builder.Build();
-
-app.UseSwagger();
-app.UseSwaggerUI();
-
-app.UseExceptionHandler(x => { });
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-app.MapControllers();
-
-app.Run();
-
-// Integration testler iÁin Program class'˝n˝ public yap
+// Required for integration tests
 public partial class Program { }

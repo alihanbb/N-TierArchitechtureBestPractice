@@ -117,7 +117,7 @@ public class ProductsApiIntegrationTests : IClassFixture<IntegrationTestWebAppFa
         var result = await response.Content.ReadFromJsonAsync<ServiceResult<CreateProductResponse>>();
         result.Should().NotBeNull();
         result!.Data.Should().NotBeNull();
-        result.Data!.ProductId.Should().BeGreaterThan(0);
+        result.Data!.Id.Should().BeGreaterThan(0);
         response.Headers.Location.Should().NotBeNull();
     }
 

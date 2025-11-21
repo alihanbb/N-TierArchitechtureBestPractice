@@ -35,7 +35,7 @@ public class ProductRepositoryTests
         {
             new Product 
             { 
-                ProductId = 1, 
+                Id = 1, 
                 ProductName = "Expensive", 
                 Price = 1000, 
                 Stock = 10, 
@@ -44,7 +44,7 @@ public class ProductRepositoryTests
             },
             new Product 
             { 
-                ProductId = 2, 
+                Id = 2, 
                 ProductName = "Cheap", 
                 Price = 100, 
                 Stock = 20, 
@@ -53,7 +53,7 @@ public class ProductRepositoryTests
             },
             new Product 
             { 
-                ProductId = 3, 
+                Id = 3, 
                 ProductName = "Medium", 
                 Price = 500, 
                 Stock = 15, 
@@ -86,7 +86,7 @@ public class ProductRepositoryTests
         {
             new Product 
             { 
-                ProductId = 1, 
+                Id = 1, 
                 ProductName = "Product", 
                 Price = 1000, 
                 Stock = 10, 
@@ -114,7 +114,7 @@ public class ProductRepositoryTests
 
         var product = new Product 
         { 
-            ProductId = 1, 
+            Id = 1, 
             ProductName = "Test Product", 
             Price = 500, 
             Stock = 10, 
@@ -130,7 +130,7 @@ public class ProductRepositoryTests
 
         // Assert
         result.Should().NotBeNull();
-        result!.ProductId.Should().Be(1);
+        result!.Id.Should().Be(1);
         result.ProductName.Should().Be("Test Product");
         result.Price.Should().Be(500);
     }
@@ -202,7 +202,7 @@ public class ProductRepositoryTests
         await context.SaveChangesAsync();
 
         // Assert
-        var updatedProduct = await context.Products.FindAsync(product.ProductId);
+        var updatedProduct = await context.Products.FindAsync(product.Id);
         updatedProduct.Should().NotBeNull();
         updatedProduct!.ProductName.Should().Be("Updated");
         updatedProduct.Price.Should().Be(200);
@@ -226,7 +226,7 @@ public class ProductRepositoryTests
 
         await context.Products.AddAsync(product);
         await context.SaveChangesAsync();
-        var productId = product.ProductId;
+        var productId = product.Id;
 
         // Act
         repository.Delete(product);

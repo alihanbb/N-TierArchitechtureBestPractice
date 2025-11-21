@@ -2,6 +2,10 @@
 
 namespace AppService.Categories.Dto
 {
-    public record CategoryWithProductDto(int CategoryId, string CategoryName, List<ProductDto> Products);
-
+    public class CategoryWithProductDto
+    {
+        public int CategoryId { get; set; }
+        public string CategoryName { get; set; } = default!;
+        public List<ProductDto> Products { get; set; } = new();
+    }
 }

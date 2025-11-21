@@ -11,9 +11,14 @@ namespace AppService.Categories
     {
        public CategoryProfilemapping() 
         {
-            CreateMap<Category, CategoryWithProductDto>().ReverseMap();
+            CreateMap<Category, CategoryWithProductDto>()
+                .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.Id))
+                .ReverseMap();
 
-            CreateMap<CategoryDto,Category>().ReverseMap();
+            CreateMap<CategoryDto, Category>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.CategoryId))
+                .ReverseMap()
+                .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.Id));
 
             CreateMap<CreateCategoryRequest, Category>().ForMember(
                   dest => dest.CategoryName, opt => opt.MapFrom(src => src.CategoryName.ToLowerInvariant()));

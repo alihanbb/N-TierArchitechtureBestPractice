@@ -1,12 +1,13 @@
-﻿using System.Net;
-using AppService;
-using Microsoft.AspNetCore.Http;
+﻿using AppService;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace AppApis.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
+    [ApiVersion("1.0")]
     public class CustomBaseController : ControllerBase
     {
         [NonAction]

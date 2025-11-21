@@ -2,7 +2,6 @@ using System.Linq.Expressions;
 using System.Net;
 using AppRepository.Categories;
 using AppRepository.UnitOfWorks;
-using AppService;
 using AppService.Categories;
 using AppService.Categories.Create;
 using AppService.Categories.Dto;
@@ -41,7 +40,7 @@ public class CategoryServiceTests
         var request = new CreateCategoryRequest("New Category");
         var category = new Category 
         { 
-            CategoryId = 5, 
+            Id = 5, 
             CategoryName = "New Category",
             Created = DateTime.UtcNow
         };
@@ -73,7 +72,7 @@ public class CategoryServiceTests
         var request = new CreateCategoryRequest("Existing Category");
         var existingCategories = new List<Category>
         {
-            new Category { CategoryId = 1, CategoryName = "Existing Category", Created = DateTime.UtcNow }
+            new Category { Id = 1, CategoryName = "Existing Category", Created = DateTime.UtcNow }
         };
 
         _mockCategoryRepository.Setup(r => r.where(It.IsAny<Expression<Func<Category, bool>>>()))
@@ -85,8 +84,9 @@ public class CategoryServiceTests
         // Assert
         result.Should().NotBeNull();
         result.IsSuccess.Should().BeFalse();
-        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
-        result.ErrorMessage.Should().Be("Category already exists");
+        result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        result.ErrorMessage.Should().ContainSingle()
+            .Which.Should().Be("Category already exists");
         _mockUnitOfWork.Verify(u => u.SaveChangesAsync(), Times.Never);
     }
 
@@ -95,31 +95,20 @@ public class CategoryServiceTests
     {
         // Arrange
         var request = new CreateCategoryRequest("");
-        var categories = new List<Category>();
 
         _mockCategoryRepository.Setup(r => r.where(It.IsAny<Expression<Func<Category, bool>>>()))
-            .Returns(categories.AsQueryable());
-
-        var category = new Category 
-        { 
-            CategoryId = 0, 
-            CategoryName = "",
-            Created = DateTime.UtcNow
-        };
-
-        _mockMapper.Setup(m => m.Map<Category>(request))
-            .Returns(category);
-        _mockCategoryRepository.Setup(r => r.AddAsync(It.IsAny<Category>()))
-            .Returns(Task.CompletedTask);
-        _mockUnitOfWork.Setup(u => u.SaveChangesAsync())
-            .ReturnsAsync(1);
+            .Returns(new List<Category>().AsQueryable());
 
         // Act
         var result = await _categoryService.CreateAsync(request);
 
         // Assert
         result.Should().NotBeNull();
-        result.IsSuccess.Should().BeTrue();
+        result.IsSuccess.Should().BeFalse();
+        result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        result.ErrorMessage.Should().NotBeNullOrEmpty();
+        _mockCategoryRepository.Verify(r => r.AddAsync(It.IsAny<Category>()), Times.Never);
+        _mockUnitOfWork.Verify(u => u.SaveChangesAsync(), Times.Never);
     }
 
     #endregion
@@ -133,13 +122,13 @@ public class CategoryServiceTests
         var request = new UpdateCategoryRequest(1, "Updated Category");
         var existingCategory = new Category 
         { 
-            CategoryId = 1, 
+            Id = 1, 
             CategoryName = "Old Category",
             Created = DateTime.UtcNow
         };
         var updatedCategory = new Category 
         { 
-            CategoryId = 1, 
+            Id = 1, 
             CategoryName = "Updated Category",
             Created = DateTime.UtcNow
         };
@@ -155,7 +144,7 @@ public class CategoryServiceTests
             .ReturnsAsync(1);
 
         // Act
-        var result = await _categoryService.UpdateAsync(request);
+        var result = await _categoryService.UpdateAsync(1, request);
 
         // Assert
         result.Should().NotBeNull();
@@ -175,7 +164,7 @@ public class CategoryServiceTests
             .ReturnsAsync((Category?)null);
 
         // Act
-        var result = await _categoryService.UpdateAsync(request);
+        var result = await _categoryService.UpdateAsync(999, request);
 
         // Assert
         result.Should().NotBeNull();
@@ -193,13 +182,13 @@ public class CategoryServiceTests
         var request = new UpdateCategoryRequest(1, "Existing Category");
         var existingCategory = new Category 
         { 
-            CategoryId = 1, 
+            Id = 1, 
             CategoryName = "Old Category",
             Created = DateTime.UtcNow
         };
         var duplicateCategories = new List<Category>
         {
-            new Category { CategoryId = 2, CategoryName = "Existing Category", Created = DateTime.UtcNow }
+            new Category { Id = 2, CategoryName = "Existing Category", Created = DateTime.UtcNow }
         };
 
         _mockCategoryRepository.Setup(r => r.GetByIdAsync(request.CategoryId))
@@ -208,13 +197,14 @@ public class CategoryServiceTests
             .Returns(duplicateCategories.AsQueryable());
 
         // Act
-        var result = await _categoryService.UpdateAsync(request);
+        var result = await _categoryService.UpdateAsync(1, request);
 
         // Assert
         result.Should().NotBeNull();
         result.IsSuccess.Should().BeFalse();
-        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
-        result.ErrorMessage.Should().Be("Category already exists");
+        result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        result.ErrorMessage.Should().ContainSingle()
+            .Which.Should().Be("Category already exists");
         _mockUnitOfWork.Verify(u => u.SaveChangesAsync(), Times.Never);
     }
 
@@ -229,7 +219,7 @@ public class CategoryServiceTests
         var categoryId = 1;
         var category = new Category 
         { 
-            CategoryId = categoryId, 
+            Id = categoryId, 
             CategoryName = "Category",
             Created = DateTime.UtcNow
         };
@@ -267,7 +257,8 @@ public class CategoryServiceTests
         result.Should().NotBeNull();
         result.IsSuccess.Should().BeFalse();
         result.StatusCode.Should().Be(HttpStatusCode.NotFound);
-        result.ErrorMessage.Should().Be("Category not found");
+        result.ErrorMessage.Should().ContainSingle()
+            .Which.Should().Be("Category not found");
         _mockUnitOfWork.Verify(u => u.SaveChangesAsync(), Times.Never);
     }
 
@@ -281,8 +272,8 @@ public class CategoryServiceTests
         // Arrange
         var categories = new List<Category>
         {
-            new Category { CategoryId = 1, CategoryName = "Category1", Created = DateTime.UtcNow },
-            new Category { CategoryId = 2, CategoryName = "Category2", Created = DateTime.UtcNow }
+            new Category { Id = 1, CategoryName = "Category1", Created = DateTime.UtcNow },
+            new Category { Id = 2, CategoryName = "Category2", Created = DateTime.UtcNow }
         };
         var categoryDtos = new List<CategoryDto>
         {
@@ -302,7 +293,7 @@ public class CategoryServiceTests
         result.Should().NotBeNull();
         result.IsSuccess.Should().BeTrue();
         result.Data.Should().HaveCount(2);
-        result.Data.First().CategoryName.Should().Be("Category1");
+        result.Data!.First().CategoryName.Should().Be("Category1");
     }
 
     [Fact]
@@ -337,7 +328,7 @@ public class CategoryServiceTests
         var categoryId = 1;
         var category = new Category 
         { 
-            CategoryId = categoryId, 
+            Id = categoryId, 
             CategoryName = "Category",
             Created = DateTime.UtcNow
         };
@@ -390,14 +381,14 @@ public class CategoryServiceTests
         var categoryId = 1;
         var category = new Category 
         { 
-            CategoryId = categoryId, 
+            Id = categoryId, 
             CategoryName = "Electronics",
             Created = DateTime.UtcNow,
             Products = new List<AppRepository.Products.Product>
             {
                 new AppRepository.Products.Product 
                 { 
-                    ProductId = 1, 
+                    Id = 1, 
                     ProductName = "Laptop", 
                     Price = 1000, 
                     Stock = 10,
@@ -439,7 +430,8 @@ public class CategoryServiceTests
         result.Should().NotBeNull();
         result.IsSuccess.Should().BeFalse();
         result.StatusCode.Should().Be(HttpStatusCode.NotFound);
-        result.ErrorMessage.Should().Be("Category not found");
+        result.ErrorMessage.Should().ContainSingle()
+            .Which.Should().Be("Category not found");
     }
 
     #endregion
@@ -454,14 +446,14 @@ public class CategoryServiceTests
         {
             new Category 
             { 
-                CategoryId = 1, 
+                Id = 1, 
                 CategoryName = "Electronics",
                 Created = DateTime.UtcNow,
                 Products = new List<AppRepository.Products.Product>()
             },
             new Category 
             { 
-                CategoryId = 2, 
+                Id = 2, 
                 CategoryName = "Books",
                 Created = DateTime.UtcNow,
                 Products = new List<AppRepository.Products.Product>()

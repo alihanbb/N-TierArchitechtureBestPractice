@@ -7,9 +7,12 @@ namespace AppRepository.Categories
     {
         public void Configure(EntityTypeBuilder<Category> builder)
         {
-
-            builder.HasKey(x => x.CategoryId);
-            builder.Property(x => x.CategoryName).IsRequired().HasMaxLength(50);
+            builder.HasKey(x => x.Id);
+            builder.Property(x => x.Id)
+                .HasColumnName("CategoryId");
+            builder.Property(x => x.CategoryName)
+                .IsRequired()
+                .HasMaxLength(50);
         }
     }
 }

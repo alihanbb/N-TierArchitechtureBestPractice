@@ -40,9 +40,9 @@ public class ProductServiceTests
         var count = 3;
         var products = new List<Product>
         {
-            new Product { ProductId = 1, ProductName = "Laptop", Price = 15000, Stock = 10, CategoryId = 1 },
-            new Product { ProductId = 2, ProductName = "Phone", Price = 8000, Stock = 20, CategoryId = 1 },
-            new Product { ProductId = 3, ProductName = "Tablet", Price = 5000, Stock = 15, CategoryId = 1 }
+            new Product { Id = 1, ProductName = "Laptop", Price = 15000, Stock = 10, CategoryId = 1 },
+            new Product { Id = 2, ProductName = "Phone", Price = 8000, Stock = 20, CategoryId = 1 },
+            new Product { Id = 3, ProductName = "Tablet", Price = 5000, Stock = 15, CategoryId = 1 }
         };
         var productDtos = new List<ProductDto>
         {
@@ -61,8 +61,9 @@ public class ProductServiceTests
 
         // Assert
         result.Should().NotBeNull();
+        result.IsSuccess.Should().BeTrue();
         result.Data.Should().HaveCount(3);
-        result.Data.First().Price.Should().Be(15000);
+        result.Data!.First().Price.Should().Be(15000);
         _mockProductRepository.Verify(r => r.GetTopPriceProductAsync(count), Times.Once);
     }
 
@@ -83,6 +84,8 @@ public class ProductServiceTests
         var result = await _productService.GetTopPriceProductAsync(count);
 
         // Assert
+        result.Should().NotBeNull();
+        result.IsSuccess.Should().BeTrue();
         result.Data.Should().BeEmpty();
     }
 
@@ -97,7 +100,7 @@ public class ProductServiceTests
         var productId = 1;
         var product = new Product 
         { 
-            ProductId = productId, 
+            Id = productId, 
             ProductName = "Laptop", 
             Price = 15000, 
             Stock = 10, 
@@ -117,8 +120,10 @@ public class ProductServiceTests
         result.Should().NotBeNull();
         result.IsSuccess.Should().BeTrue();
         result.Data.Should().NotBeNull();
-        result.Data!.ProductId.Should().Be(productId);
-        result.Data.ProductName.Should().Be("Laptop");
+        result.Data!.ProductName.Should().Be("Laptop");
+        result.Data.Price.Should().Be(15000);
+        result.Data.Stock.Should().Be(10);
+        _mockProductRepository.Verify(r => r.GetByIdAsync(productId), Times.Once);
     }
 
     [Fact]
@@ -136,7 +141,7 @@ public class ProductServiceTests
         result.Should().NotBeNull();
         result.IsSuccess.Should().BeFalse();
         result.StatusCode.Should().Be(HttpStatusCode.NotFound);
-        result.ErrorMessage.Should().Be("Product not found");
+        result.ErrorMessage.Should().Contain("Product not found");
     }
 
     #endregion
@@ -149,8 +154,8 @@ public class ProductServiceTests
         // Arrange
         var products = new List<Product>
         {
-            new Product { ProductId = 1, ProductName = "Product1", Price = 100, Stock = 10, CategoryId = 1 },
-            new Product { ProductId = 2, ProductName = "Product2", Price = 200, Stock = 20, CategoryId = 1 }
+            new Product { Id = 1, ProductName = "Product1", Price = 100, Stock = 10, CategoryId = 1 },
+            new Product { Id = 2, ProductName = "Product2", Price = 200, Stock = 20, CategoryId = 1 }
         };
         var productDtos = new List<ProductDto>
         {
@@ -184,9 +189,9 @@ public class ProductServiceTests
         var pageSize = 2;
         var products = new List<Product>
         {
-            new Product { ProductId = 1, ProductName = "Product1", Price = 100, Stock = 10, CategoryId = 1 },
-            new Product { ProductId = 2, ProductName = "Product2", Price = 200, Stock = 20, CategoryId = 1 },
-            new Product { ProductId = 3, ProductName = "Product3", Price = 300, Stock = 30, CategoryId = 1 }
+            new Product { Id = 1, ProductName = "Product1", Price = 100, Stock = 10, CategoryId = 1 },
+            new Product { Id = 2, ProductName = "Product2", Price = 200, Stock = 20, CategoryId = 1 },
+            new Product { Id = 3, ProductName = "Product3", Price = 300, Stock = 30, CategoryId = 1 }
         };
         var productDtos = new List<ProductDto>
         {
@@ -216,9 +221,9 @@ public class ProductServiceTests
         var pageSize = 2;
         var products = new List<Product>
         {
-            new Product { ProductId = 1, ProductName = "Product1", Price = 100, Stock = 10, CategoryId = 1 },
-            new Product { ProductId = 2, ProductName = "Product2", Price = 200, Stock = 20, CategoryId = 1 },
-            new Product { ProductId = 3, ProductName = "Product3", Price = 300, Stock = 30, CategoryId = 1 }
+            new Product { Id = 1, ProductName = "Product1", Price = 100, Stock = 10, CategoryId = 1 },
+            new Product { Id = 2, ProductName = "Product2", Price = 200, Stock = 20, CategoryId = 1 },
+            new Product { Id = 3, ProductName = "Product3", Price = 300, Stock = 30, CategoryId = 1 }
         };
         var productDtos = new List<ProductDto>
         {
@@ -234,6 +239,7 @@ public class ProductServiceTests
         var result = await _productService.GetAllPageListAsync(pageIndex, pageSize);
 
         // Assert
+        result.Should().NotBeNull();
         result.IsSuccess.Should().BeTrue();
         result.Data.Should().HaveCount(1);
     }
@@ -249,7 +255,7 @@ public class ProductServiceTests
         var request = new CreateProductRequest("NewProduct", 500, 50, 1);
         var product = new Product 
         { 
-            ProductId = 5, 
+            Id = 5, 
             ProductName = "NewProduct", 
             Price = 500, 
             Stock = 50, 
@@ -274,7 +280,7 @@ public class ProductServiceTests
         result.StatusCode.Should().Be(HttpStatusCode.Created);
         result.Data.Should().NotBeNull();
         result.Data!.ProductId.Should().Be(5);
-        result.UrlAsCreated.Should().Be("api/products/5");
+        result.Url.Should().Be("api/products/5");
         _mockUnitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once);
     }
 
@@ -285,7 +291,7 @@ public class ProductServiceTests
         var request = new CreateProductRequest("ExistingProduct", 500, 50, 1);
         var existingProducts = new List<Product>
         {
-            new Product { ProductId = 1, ProductName = "ExistingProduct", Price = 500, Stock = 50, CategoryId = 1 }
+            new Product { Id = 1, ProductName = "ExistingProduct", Price = 500, Stock = 50, CategoryId = 1 }
         };
 
         _mockProductRepository.Setup(r => r.where(It.IsAny<Expression<Func<Product, bool>>>()))
@@ -298,7 +304,7 @@ public class ProductServiceTests
         result.Should().NotBeNull();
         result.IsSuccess.Should().BeFalse();
         result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        result.ErrorMessage.Should().Be("ürün ismi veri tabanýnda bulunmaktadýr");
+        result.ErrorMessage.Should().Contain("ürün ismi veri tabanýnda bulunmaktadýr");
         _mockUnitOfWork.Verify(u => u.SaveChangesAsync(), Times.Never);
     }
 
@@ -314,7 +320,7 @@ public class ProductServiceTests
         var request = new UpdateProductRequest("UpdatedProduct", 600, 60);
         var existingProduct = new Product 
         { 
-            ProductId = productId, 
+            Id = productId, 
             ProductName = "OldProduct", 
             Price = 500, 
             Stock = 50, 
@@ -322,7 +328,7 @@ public class ProductServiceTests
         };
         var updatedProduct = new Product 
         { 
-            ProductId = productId, 
+            Id = productId, 
             ProductName = "UpdatedProduct", 
             Price = 600, 
             Stock = 60, 
@@ -367,7 +373,7 @@ public class ProductServiceTests
         result.Should().NotBeNull();
         result.IsSuccess.Should().BeFalse();
         result.StatusCode.Should().Be(HttpStatusCode.NotFound);
-        result.ErrorMessage.Should().Be("Ürün bulunamadý");
+        result.ErrorMessage.Should().Contain("Ürün bulunamadý");
         _mockUnitOfWork.Verify(u => u.SaveChangesAsync(), Times.Never);
     }
 
@@ -379,7 +385,7 @@ public class ProductServiceTests
         var request = new UpdateProductRequest("ExistingProduct", 600, 60);
         var existingProduct = new Product 
         { 
-            ProductId = productId, 
+            Id = productId, 
             ProductName = "OldProduct", 
             Price = 500, 
             Stock = 50, 
@@ -387,7 +393,7 @@ public class ProductServiceTests
         };
         var duplicateProducts = new List<Product>
         {
-            new Product { ProductId = 2, ProductName = "ExistingProduct", Price = 700, Stock = 70, CategoryId = 1 }
+            new Product { Id = 2, ProductName = "ExistingProduct", Price = 700, Stock = 70, CategoryId = 1 }
         };
 
         _mockProductRepository.Setup(r => r.GetByIdAsync(productId))
@@ -402,7 +408,7 @@ public class ProductServiceTests
         result.Should().NotBeNull();
         result.IsSuccess.Should().BeFalse();
         result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        result.ErrorMessage.Should().Be("ürün ismi veri tabanýnda bulunmaktadýr");
+        result.ErrorMessage.Should().Contain("ürün ismi veri tabanýnda bulunmaktadýr");
         _mockUnitOfWork.Verify(u => u.SaveChangesAsync(), Times.Never);
     }
 
@@ -417,7 +423,7 @@ public class ProductServiceTests
         var request = new UpdateStockProductRequest(1, 100);
         var product = new Product 
         { 
-            ProductId = 1, 
+            Id = 1, 
             ProductName = "Product", 
             Price = 500, 
             Stock = 50, 
@@ -458,7 +464,7 @@ public class ProductServiceTests
         result.Should().NotBeNull();
         result.IsSuccess.Should().BeFalse();
         result.StatusCode.Should().Be(HttpStatusCode.NotFound);
-        result.ErrorMessage.Should().Be("Product not found");
+        result.ErrorMessage.Should().Contain("Product not found");
         _mockUnitOfWork.Verify(u => u.SaveChangesAsync(), Times.Never);
     }
 
@@ -473,7 +479,7 @@ public class ProductServiceTests
         var productId = 1;
         var product = new Product 
         { 
-            ProductId = productId, 
+            Id = productId, 
             ProductName = "Product", 
             Price = 500, 
             Stock = 50, 
@@ -513,7 +519,7 @@ public class ProductServiceTests
         result.Should().NotBeNull();
         result.IsSuccess.Should().BeFalse();
         result.StatusCode.Should().Be(HttpStatusCode.NotFound);
-        result.ErrorMessage.Should().Be("Product not found");
+        result.ErrorMessage.Should().Contain("Product not found");
         _mockUnitOfWork.Verify(u => u.SaveChangesAsync(), Times.Never);
     }
 

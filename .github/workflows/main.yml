@@ -1,4 +1,4 @@
-name: Build and Deploy to AKS
+name: CI/CD Pipeline
 
 on:
   push:
@@ -9,33 +9,35 @@ on:
       - main
 
 jobs:
-  build-and-push:
+  build-and-test:
     runs-on: ubuntu-latest
 
     steps:
-
     - name: Checkout code
       uses: actions/checkout@v3
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: '8.0.x' # Projenizin .NET sürümüne göre değiştirin
+        dotnet-version: '9.0.x'
 
     - name: Restore dependencies
-      run: |
-        dotnet restore ./KatmanliMimari.sln # Çözüm dosyasının adını güncelleyin
-        dotnet restore ./AppApi/AppApi.csproj
-        dotnet restore ./AppHost/AppHost.csproj
-        dotnet restore ./AppRepository/AppRepository.csproj
-        dotnet restore ./AppService/AppService.csproj
-
+      run: dotnet restore "KatmanlıMimari.sln"
 
     - name: Build
-      run: |
-        dotnet build ./KatmanliMimari.sln --configuration Release --no-restore
+      run: dotnet build "KatmanlıMimari.sln" --configuration Release --no-restore
+
+    - name: Run Unit Tests
+      run: dotnet test ./UnitTest/UnitTest.csproj --configuration Release --no-build --verbosity normal
+
+    - name: Run Integration Tests
+      run: dotnet test ./IntegrationTest/IntegrationTest.csproj --configuration Release --no-build --verbosity normal
 
     - name: Publish
-      run: dotnet publish ./AppHost/AppHost.csproj -c Release -o ./publish /p:UseAppHost=false
+      run: dotnet publish ./AppApis/AppApi.csproj -c Release -o ./publish /p:UseAppHost=false
 
-
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: webapp
+        path: ./publish

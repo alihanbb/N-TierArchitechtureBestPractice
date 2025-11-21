@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: katmanlimimari
-  labels:
-    name: katmanlimimari
-    environment: production

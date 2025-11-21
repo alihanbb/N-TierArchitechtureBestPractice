@@ -6,6 +6,7 @@ using FluentValidation;
 using System.Reflection;
 using AppService.ExceptionHandlers;
 using AppService.Categories;
+using AppService.Filters;
 
 namespace AppService.Extentions
 {
@@ -17,13 +18,13 @@ namespace AppService.Extentions
            services.AddScoped<ICategoryService, CategoryService>();
 
            services.AddFluentValidationAutoValidation();
-
+           services.AddScoped(typeof(NotFoundFilter<,>));
            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
            
            services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
            services.AddExceptionHandler<CriticalExsepsionHandler>();
-            services.AddExceptionHandler<GlobalExceptionHandler>();
+           services.AddExceptionHandler<GlobalExceptionHandler>();
 
 
 

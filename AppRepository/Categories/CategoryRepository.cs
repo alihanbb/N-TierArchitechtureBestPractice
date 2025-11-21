@@ -1,14 +1,13 @@
 ﻿using AppRepository.Context;
 using AppRepository.Repository;
-using Microsoft.EntityFrameworkCore;
 
 namespace AppRepository.Categories
 {
-    public class CategoryRepository(AppDbContextcs context) : GenericRepository<Category>(context), ICategoryRepository
+    public class CategoryRepository(AppDbContextcs context) : GenericRepository<Category, int>(context), ICategoryRepository
     {
         public Task<Category> GetCategoryWithProductsAsync(int categoryId)
         {
-            return context.Categorys.Include(x => x.Products).FirstOrDefaultAsync(x => x.CategoryId == categoryId);
+            return context.Categorys.Include(x => x.Products).FirstOrDefaultAsync(x => x.Id == categoryId);
         }
         public IQueryable<Category> GetCategoryByProductsAsync()
         {

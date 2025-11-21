@@ -6,5 +6,23 @@ using System.Threading.Tasks;
 
 namespace AppService.Products
 {
-    public record ProductDto(int ProductId, string ProductName, decimal Price, int Stock);
+    public class ProductDto
+    {
+        public ProductDto()
+        {
+        }
+
+        public ProductDto(int productId, string productName, decimal price, int stock)
+        {
+            ProductId = productId;
+            ProductName = productName;
+            Price = price;
+            Stock = stock;
+        }
+
+        public int ProductId { get; set; }
+        public string ProductName { get; set; } = default!;
+        public decimal Price { get; set; }
+        public int Stock { get; set; }
+    }
 }

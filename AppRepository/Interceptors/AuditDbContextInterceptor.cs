@@ -5,30 +5,48 @@ namespace AppRepository.Interceptors
 {
     public class AuditDbContextInterceptor : SaveChangesInterceptor
     {
-        private static readonly Dictionary<EntityState,Action<DbContext,IAuditEntitiy>> _behaviors = new()
+        private static readonly Dictionary<EntityState, Action<DbContext, IAuditEntitiy>> _behaviors = new()
         {
-            {EntityState.Added,AddBehavior},
-            {EntityState.Modified,ModifedBehavior}
+            { EntityState.Added, AddBehavior },
+            { EntityState.Modified, ModifiedBehavior }
         };
-        private static void AddBehavior(DbContext context, IAuditEntitiy auditEntitiy )
-        {
-            auditEntitiy.Created = DateTime.Now;
-            context.Entry(auditEntitiy).Property(x => x.Created).IsModified = false;
-        }
-        private static void ModifedBehavior(DbContext context, IAuditEntitiy auditEntitiy)
-        {
-            context.Entry(auditEntitiy).Property(x => x.Updated).IsModified = false;
-            auditEntitiy.Updated = DateTime.Now;
-        }
-        public override ValueTask<int> SavedChangesAsync(SaveChangesCompletedEventData eventData, int result, CancellationToken cancellationToken = default)
-        {
-            foreach (var entityEntry in eventData.Context!.ChangeTracker.Entries().ToList())
-            {
-                if (entityEntry.Entity is not IAuditEntitiy auditEntitiy) continue;
 
-                _behaviors[entityEntry.State](eventData.Context, auditEntitiy);
+        private static void AddBehavior(DbContext context, IAuditEntitiy auditEntity)
+        {
+            auditEntity.Created = DateTime.UtcNow;
+        }
+
+        private static void ModifiedBehavior(DbContext context, IAuditEntitiy auditEntity)
+        {
+            auditEntity.Updated = DateTime.UtcNow;
+            // Created alanının güncellenmesini engelle
+            context.Entry(auditEntity).Property(x => x.Created).IsModified = false;
+        }
+
+        public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
+        {
+            SetAuditProperties(eventData.Context!);
+            return base.SavingChanges(eventData, result);
+        }
+
+        public override ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData, InterceptionResult<int> result, CancellationToken cancellationToken = default)
+        {
+            SetAuditProperties(eventData.Context!);
+            return base.SavingChangesAsync(eventData, result, cancellationToken);
+        }
+
+        private static void SetAuditProperties(DbContext context)
+        {
+            foreach (var entityEntry in context.ChangeTracker.Entries().ToList())
+            {
+                if (entityEntry.Entity is not IAuditEntitiy auditEntity) continue;
+
+                // Sadece Added ve Modified state'lerinde işlem yap
+                if (_behaviors.TryGetValue(entityEntry.State, out var behavior))
+                {
+                    behavior(context, auditEntity);
+                }
             }
-            return base.SavedChangesAsync(eventData, result, cancellationToken);
         }
     }
 }

@@ -26,7 +26,7 @@ namespace AppRepository.Extentions
 
             });
             services.AddScoped<IProductRepository, ProductRepository>();
-            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             //Addscoped veri tabanına gitme durumunda kullan, bağzı durumlarda singleton kullanılabilir. İyice bu durumu araştır.
             services.AddScoped<ICategoryRepository, CategoryRepository>();

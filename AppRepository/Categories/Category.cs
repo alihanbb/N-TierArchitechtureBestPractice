@@ -2,10 +2,8 @@
 
 namespace AppRepository.Categories
  {
-    public class Category : IAuditEntitiy
+    public class Category : BaseEntity<int>,IAuditEntitiy
     {
-        public int CategoryId { get; set; }
-
         public string CategoryName { get; set; }
 
         public List<Product>? Products { get; set; }

@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace AppService.Products
+namespace AppService
 {
     public class FluentValidationFiltre : IAsyncActionFilter
     {
-        public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)// delegate metodların değerlerini ve referanslarıı saklayan bir veri türüdür.
+        public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
+        // delegate metodların değerlerini ve referanslarıı saklayan bir veri türüdür.
         {
             if (!context.ModelState.IsValid)
             {

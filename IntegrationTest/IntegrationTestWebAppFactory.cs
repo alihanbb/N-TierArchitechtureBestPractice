@@ -31,7 +31,7 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>
             
             // Repository servisleri ekle
             services.AddScoped<IProductRepository, ProductRepository>();
-            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
         });
@@ -63,9 +63,9 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>
     {
         // Kategoriler ekle
         context.Categorys.AddRange(
-            new Category { CategoryId = 1, CategoryName = "Elektronik", Created = DateTime.UtcNow },
-            new Category { CategoryId = 2, CategoryName = "Giyim", Created = DateTime.UtcNow },
-            new Category { CategoryId = 3, CategoryName = "Kitap", Created = DateTime.UtcNow }
+            new Category { Id = 1, CategoryName = "Elektronik", Created = DateTime.UtcNow },
+            new Category { Id = 2, CategoryName = "Giyim", Created = DateTime.UtcNow },
+            new Category { Id = 3, CategoryName = "Kitap", Created = DateTime.UtcNow }
         );
         context.SaveChanges();
 
@@ -73,7 +73,7 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>
         context.Products.AddRange(
             new Product
             {
-                ProductId = 1,
+                Id = 1,
                 ProductName = "Laptop",
                 Price = 15000,
                 Stock = 10,
@@ -82,7 +82,7 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>
             },
             new Product
             {
-                ProductId = 2,
+                Id = 2,
                 ProductName = "Mouse",
                 Price = 150,
                 Stock = 50,
@@ -91,7 +91,7 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>
             },
             new Product
             {
-                ProductId = 3,
+                Id = 3,
                 ProductName = "T-Shirt",
                 Price = 200,
                 Stock = 100,

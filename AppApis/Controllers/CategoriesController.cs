@@ -1,12 +1,15 @@
 ﻿using AppApis.Controllers;
+using AppRepository.Categories;
+using AppRepository.Products;
 using AppService.Categories;
 using AppService.Categories.Create;
 using AppService.Categories.Update;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+using AppService.Filters;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace AppApi.Controllers
 {
+    [EnableRateLimiting("perIp")]
     public class CategoriesController(ICategoryService _categoryService) : CustomBaseController
     {
         [HttpGet]
@@ -30,11 +33,13 @@ namespace AppApi.Controllers
         {
             return CreateActionResult(await _categoryService.CreateAsync(categoryRequest));
         }
+        [ServiceFilter(typeof(NotFoundFilter<Category, int>))]
         [HttpPut]
-        public async Task<IActionResult> UpdateCategory(UpdateCategoryRequest categoryRequest)
+        public async Task<IActionResult> UpdateCategory(int id,UpdateCategoryRequest categoryRequest)
         {
-            return CreateActionResult(await _categoryService.UpdateAsync(categoryRequest));
+            return CreateActionResult(await _categoryService.UpdateAsync(id, categoryRequest));
         }
+        [ServiceFilter(typeof(NotFoundFilter<Category, int>))]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCategory(int id)
         {

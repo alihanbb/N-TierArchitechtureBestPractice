@@ -203,16 +203,16 @@ namespace UnitTest.Api
             // Arrange
             var request = new UpdateCategoryRequest(1, "Updated Category");
             var serviceResult = ServiceResult.Succes(HttpStatusCode.NoContent);
-            _mockCategoryService.Setup(s => s.UpdateAsync(request))
+            _mockCategoryService.Setup(s => s.UpdateAsync(1,request))
                 .ReturnsAsync(serviceResult);
 
             // Act
-            var result = await _controller.UpdateCategory(request);
+            var result = await _controller.UpdateCategory(1,request);
 
             // Assert
             var objectResult = Assert.IsType<ObjectResult>(result);
             Assert.Equal((int)HttpStatusCode.NoContent, objectResult.StatusCode);
-            _mockCategoryService.Verify(s => s.UpdateAsync(request), Times.Once);
+            _mockCategoryService.Verify(s => s.UpdateAsync(1,request), Times.Once);
         }
 
         [Fact]
@@ -221,11 +221,11 @@ namespace UnitTest.Api
             // Arrange
             var request = new UpdateCategoryRequest(999, "Updated Category");
             var serviceResult = ServiceResult.Faild("Category not found", HttpStatusCode.NotFound);
-            _mockCategoryService.Setup(s => s.UpdateAsync(request))
+            _mockCategoryService.Setup(s => s.UpdateAsync(999,request))
                 .ReturnsAsync(serviceResult);
 
             // Act
-            var result = await _controller.UpdateCategory(request);
+            var result = await _controller.UpdateCategory(999,request);
 
             // Assert
             var objectResult = Assert.IsType<ObjectResult>(result);
@@ -238,11 +238,11 @@ namespace UnitTest.Api
             // Arrange
             var request = new UpdateCategoryRequest(1, "Existing Category");
             var serviceResult = ServiceResult.Faild("Category already exists", HttpStatusCode.NotFound);
-            _mockCategoryService.Setup(s => s.UpdateAsync(request))
+            _mockCategoryService.Setup(s => s.UpdateAsync(1,request))
                 .ReturnsAsync(serviceResult);
 
             // Act
-            var result = await _controller.UpdateCategory(request);
+            var result = await _controller.UpdateCategory(1,request);
 
             // Assert
             var objectResult = Assert.IsType<ObjectResult>(result);

@@ -33,7 +33,7 @@ public class CategoryRepositoryTests
 
         var category = new Category 
         { 
-            CategoryId = 1, 
+            Id = 1, 
             CategoryName = "Electronics",
             Created = DateTime.UtcNow 
         };
@@ -67,7 +67,7 @@ public class CategoryRepositoryTests
 
         // Assert
         result.Should().NotBeNull();
-        result.CategoryId.Should().Be(1);
+        result.Id.Should().Be(1);
         result.CategoryName.Should().Be("Electronics");
         result.Products.Should().NotBeNull();
         result.Products!.Should().HaveCount(2);
@@ -98,7 +98,7 @@ public class CategoryRepositoryTests
 
         var category = new Category 
         { 
-            CategoryId = 1, 
+            Id = 1, 
             CategoryName = "Empty Category",
             Created = DateTime.UtcNow 
         };
@@ -111,7 +111,7 @@ public class CategoryRepositoryTests
 
         // Assert
         result.Should().NotBeNull();
-        result.CategoryId.Should().Be(1);
+        result.Id.Should().Be(1);
         result.Products.Should().BeEmpty();
     }
 
@@ -124,9 +124,9 @@ public class CategoryRepositoryTests
 
         var categories = new List<Category>
         {
-            new Category { CategoryId = 1, CategoryName = "Electronics", Created = DateTime.UtcNow },
-            new Category { CategoryId = 2, CategoryName = "Books", Created = DateTime.UtcNow },
-            new Category { CategoryId = 3, CategoryName = "Empty", Created = DateTime.UtcNow }
+            new Category { Id = 1, CategoryName = "Electronics", Created = DateTime.UtcNow },
+            new Category { Id = 2, CategoryName = "Books", Created = DateTime.UtcNow },
+            new Category { Id = 3, CategoryName = "Empty", Created = DateTime.UtcNow }
         };
 
         var products = new List<Product>
@@ -181,7 +181,7 @@ public class CategoryRepositoryTests
 
         var category = new Category 
         { 
-            CategoryId = 1, 
+            Id = 1, 
             CategoryName = "Test Category",
             Created = DateTime.UtcNow 
         };
@@ -194,7 +194,7 @@ public class CategoryRepositoryTests
 
         // Assert
         result.Should().NotBeNull();
-        result!.CategoryId.Should().Be(1);
+        result!.Id.Should().Be(1);
         result.CategoryName.Should().Be("Test Category");
     }
 
@@ -232,7 +232,7 @@ public class CategoryRepositoryTests
         // Assert
         var savedCategory = await context.Categorys.FirstOrDefaultAsync(c => c.CategoryName == "New Category");
         savedCategory.Should().NotBeNull();
-        savedCategory!.CategoryId.Should().BeGreaterThan(0);
+        savedCategory!.Id.Should().BeGreaterThan(0);
     }
 
     [Fact]
@@ -257,7 +257,7 @@ public class CategoryRepositoryTests
         await context.SaveChangesAsync();
 
         // Assert
-        var updatedCategory = await context.Categorys.FindAsync(category.CategoryId);
+        var updatedCategory = await context.Categorys.FindAsync(category.Id);
         updatedCategory.Should().NotBeNull();
         updatedCategory!.CategoryName.Should().Be("Updated");
     }
@@ -277,7 +277,7 @@ public class CategoryRepositoryTests
 
         await context.Categorys.AddAsync(category);
         await context.SaveChangesAsync();
-        var categoryId = category.CategoryId;
+        var categoryId = category.Id;
 
         // Act
         repository.Delete(category);
@@ -351,7 +351,7 @@ public class CategoryRepositoryTests
 
         var category = new Category 
         { 
-            CategoryId = 1, 
+            Id = 1, 
             CategoryName = "Electronics",
             Created = DateTime.UtcNow 
         };
