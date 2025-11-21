@@ -42,7 +42,7 @@ try
     // Hybrid Cache (L1 + L2)
     builder.Services.AddHybridCache(builder.Configuration);
 
-    // Health Checks
+    // Health Checks with UI
     builder.Services.AddHealthCheckConfiguration(builder.Configuration);
 
     // Application Services & Repository
@@ -79,13 +79,14 @@ try
     app.UseHttpsRedirection();
     app.UseAuthorization();
 
-    // Health Check Endpoints
+    // Health Check Endpoints (includes UI)
     app.MapHealthCheckEndpoints();
 
     // API Controllers
     app.MapControllers();
 
     Log.Information("✅ Application started successfully.");
+    Log.Information("📊 Health Check UI available at: /health-ui");
     app.Run();
 }
 catch (Exception ex)
